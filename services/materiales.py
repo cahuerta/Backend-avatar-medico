@@ -110,7 +110,12 @@ def precargar_todo() -> None:
         return
     _precarga_en_curso.set()
     try:
-        for region in listar_regiones():
+        try:
+            regiones = listar_regiones()
+        except Exception as e:  # noqa: BLE001 — la precarga nunca debe romper el ping
+            print(f"[materiales] precarga sin regiones: {e!r}")
+            return
+        for region in regiones:
             try:
                 texto_region(region)
             except Exception:
@@ -128,3 +133,4 @@ def cache_vigente() -> bool:
         if not guardado or not _vigente(guardado[2]):
             return False
     return True
+  
