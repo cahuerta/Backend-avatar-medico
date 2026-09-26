@@ -2,13 +2,15 @@
 routers/avatar.py
 Endpoints públicos del avatar.
 
-  GET  /ping              -> despierta el servidor y precarga materiales en segundo plano.
-  POST /avatar/preguntar  -> {pregunta} -> {respuesta, tipo, region, fuentes}
+  GET  /ping              -> despierta este servidor y los servicios conectados
+                             (EvidenciaMed, ASISTENCIA-ICA) y precarga materiales del curso.
+  POST /avatar/preguntar  -> {pregunta} -> {respuesta, tipo, region, fuentes}   (avatar de clase)
 """
 
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel, Field
 
+from services import evidenciamed, ica
 from services.avatar_respuesta import procesar_pregunta
 from services.materiales import cache_vigente, precargar_todo
 
@@ -21,13 +23,16 @@ class PreguntaIn(BaseModel):
 
 @router.get("/ping")
 def ping(tareas: BackgroundTasks):
-    """Responde al instante. Si la caché no está vigente, la llena después de responder."""
+    """Responde al instante; lo demás corre después de responder."""
     precargando = not cache_vigente()
     if precargando:
         tareas.add_task(precargar_todo)
+    tareas.add_task(evidenciamed.despertar)
+    tareas.add_task(ica.despertar)
     return {"ok": True, "precargando": precargando}
 
 
 @router.post("/avatar/preguntar")
 def preguntar(body: PreguntaIn):
     return procesar_pregunta(body.pregunta)
+  
