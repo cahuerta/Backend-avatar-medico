@@ -2,8 +2,10 @@
 Backend — Avatar Hipokratia
 main.py — app FastAPI del avatar de voz.
 
-Lee (solo lectura) los materiales del curso de traumatología desde Supabase,
-sin tocar el backend de traumatología.
+- Avatar de clase: lee (solo lectura) los materiales del curso de traumatología
+  desde Supabase, sin tocar el backend de traumatología.
+- Avatar para personas: conversa con EvidenciaMed y propone órdenes de examen
+  con ASISTENCIA-ICA, ambos server-to-server y sin tocar esos repos.
 
 Arranque en Render:
   uvicorn main:app --host 0.0.0.0 --port $PORT
@@ -12,7 +14,7 @@ Arranque en Render:
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import avatar
+from routers import avatar, paciente
 
 app = FastAPI(title="Avatar Hipokratia API")
 
@@ -24,8 +26,10 @@ app.add_middleware(
 )
 
 app.include_router(avatar.router)
+app.include_router(paciente.router)
 
 
 @app.get("/")
 def raiz():
     return {"servicio": "avatar-hipokratia", "ok": True}
+  
