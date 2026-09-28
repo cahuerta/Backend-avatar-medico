@@ -2,15 +2,15 @@
 routers/avatar.py
 Endpoints públicos del avatar.
 
-  GET  /ping              -> despierta este servidor y los servicios conectados
-                             (EvidenciaMed, ASISTENCIA-ICA) y precarga materiales del curso.
+  GET  /ping              -> despierta este servidor y EvidenciaMed, y precarga
+                             materiales del curso (avatar de clase).
   POST /avatar/preguntar  -> {pregunta} -> {respuesta, tipo, region, fuentes}   (avatar de clase)
 """
 
 from fastapi import APIRouter, BackgroundTasks
 from pydantic import BaseModel, Field
 
-from services import evidenciamed, ica
+from services import evidenciamed
 from services.avatar_respuesta import procesar_pregunta
 from services.materiales import cache_vigente, precargar_todo
 
@@ -28,7 +28,6 @@ def ping(tareas: BackgroundTasks):
     if precargando:
         tareas.add_task(precargar_todo)
     tareas.add_task(evidenciamed.despertar)
-    tareas.add_task(ica.despertar)
     return {"ok": True, "precargando": precargando}
 
 
