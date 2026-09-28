@@ -4,8 +4,9 @@ main.py — app FastAPI del avatar de voz.
 
 - Avatar de clase: lee (solo lectura) los materiales del curso de traumatología
   desde Supabase, sin tocar el backend de traumatología.
-- Avatar para personas: conversa con EvidenciaMed y propone órdenes de examen
-  con ASISTENCIA-ICA, ambos server-to-server y sin tocar esos repos.
+- Avatar informativo para personas: conversa con EvidenciaMed (server-to-server,
+  sin tocar ese repo). Solo informativo: las órdenes de examen viven en el
+  avatar clínico dentro de ICA.
 
 Arranque en Render:
   uvicorn main:app --host 0.0.0.0 --port $PORT
